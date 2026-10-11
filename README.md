@@ -134,3 +134,7 @@ Visit [http://localhost:5173](http://localhost:5173) in your browser.
 - **File Validation**: Content inspection (magic byte validation for images and PDF headers), size caps, and filename sanitization.
 - **SSRF Mitigation**: Disallow non-HTTPS schemes for external links (`javascript:`, `file:`, etc.).
 - **Private Buckets**: Internal storage path is never returned in client API payloads.
+
+## 🚀 Production Deployment
+
+See [docs/deployment.md](docs/deployment.md) for the Supabase setup, Render Blueprint deployment, Vercel configuration, required environment variables, and post-deployment checks. The Render Blueprint uses the paid Starter plan because Render only supports pre-deploy migrations on paid web services.

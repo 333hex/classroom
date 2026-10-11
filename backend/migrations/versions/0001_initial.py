@@ -29,6 +29,7 @@ def upgrade() -> None:
         "video_link",
         "website_link",
         name="resource_type_enum",
+        create_type=False,
     )
     resource_type_enum.create(op.get_bind(), checkfirst=True)
 
@@ -49,10 +50,7 @@ def upgrade() -> None:
         sa.Column("class_date", sa.Date, nullable=True),
         sa.Column(
             "resource_type",
-            sa.Enum(
-                "pdf", "doc", "docx", "image", "typed", "video_link", "website_link",
-                name="resource_type_enum",
-            ),
+            resource_type_enum,
             nullable=False,
         ),
         sa.Column("typed_content", sa.Text, nullable=True),

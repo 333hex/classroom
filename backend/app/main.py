@@ -23,7 +23,7 @@ settings = get_settings()
 limiter = Limiter(key_func=get_remote_address)
 
 # ─── Application ──────────────────────────────────────────────────────────────
-app = FastAPI(
+fastapi_app = FastAPI(
     title="Class Connect API",
     description="Public educational notes-sharing platform API.",
     version="1.0.0",
@@ -32,21 +32,11 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-# ─── CORS ─────────────────────────────────────────────────────────────────────
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
-    max_age=600,
-)
+fastapi_app.state.limiter = limiter
+fastapi_app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ─── Request size limit middleware ────────────────────────────────────────────
-@app.middleware("http")
+@fastapi_app.middleware("http")
 async def limit_request_size(request: Request, call_next):
     content_length = request.headers.get("content-length")
     if content_length:
@@ -62,7 +52,7 @@ async def limit_request_size(request: Request, call_next):
 
 
 # ─── Global error handler ─────────────────────────────────────────────────────
-@app.exception_handler(Exception)
+@fastapi_app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
     logger.error("Unhandled exception", exc_info=exc, path=str(request.url))
     return JSONResponse(
@@ -74,13 +64,23 @@ async def generic_exception_handler(request: Request, exc: Exception):
 # ─── Routes ───────────────────────────────────────────────────────────────────
 API_PREFIX = "/api/v1"
 
-app.include_router(health.router, prefix=API_PREFIX)
-app.include_router(notes.router, prefix=API_PREFIX)
+fastapi_app.include_router(health.router, prefix=API_PREFIX)
+fastapi_app.include_router(notes.router, prefix=API_PREFIX)
 
 
-@app.get("/", include_in_schema=False)
+@fastapi_app.get("/", include_in_schema=False)
 async def root():
     return {"message": "Class Connect API", "docs": "/api/docs"}
+
+
+app = CORSMiddleware(
+    app=fastapi_app,
+    allow_origins=settings.cors_origins_list,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    max_age=600,
+)
 
 
 logger.info(

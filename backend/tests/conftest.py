@@ -21,7 +21,7 @@ os.environ["RATE_LIMIT_DELETE"] = "1000/minute"
 os.environ["RATE_LIMIT_DOWNLOAD"] = "1000/minute"
 
 from app.db.database import Base, get_db
-from app.main import app
+from app.main import app, fastapi_app
 
 # ─── Test database ────────────────────────────────────────────────────────────
 TEST_DATABASE_URL = "sqlite:///./test_classconnect.db"
@@ -74,10 +74,10 @@ def client(db_session):
         finally:
             pass
 
-    app.dependency_overrides[get_db] = override_get_db
+    fastapi_app.dependency_overrides[get_db] = override_get_db
     # Disable rate limiting for unit tests
-    app.state.limiter.enabled = False
+    fastapi_app.state.limiter.enabled = False
     with TestClient(app) as c:
         yield c
-    app.state.limiter.enabled = True
-    app.dependency_overrides.clear()
+    fastapi_app.state.limiter.enabled = True
+    fastapi_app.dependency_overrides.clear()

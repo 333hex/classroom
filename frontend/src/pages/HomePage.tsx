@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Download, Search, Sparkles, UploadCloud, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, BookOpen, Search, UploadCloud, FileText, Library, Bookmark, GraduationCap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { NoteCard } from '../components/notes/NoteCard';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -50,69 +50,80 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-16 py-6">
+    <div className="space-y-14 py-7 sm:py-10">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border border-slate-800 glass-panel p-8 sm:p-14 text-center">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none -z-10" />
-
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary-light border border-primary/20 text-xs font-semibold mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
-          Free & Open Educational Resources
-        </div>
-
-        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-tight mb-5">
-          Share knowledge, ace your classes with{' '}
-          <span className="bg-gradient-to-r from-primary-light to-blue-400 bg-clip-text text-transparent">
-            Class Connect
-          </span>
-        </h1>
-
-        <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
-          A community-driven public library where students and educators can freely upload, organize, preview, and download study notes, lecture slides, diagrams, and reference guides.
-        </p>
+      <section className="relative overflow-hidden rounded-[2rem] glass-panel p-7 sm:p-12 lg:p-14">
+        <div className="absolute -top-28 -right-24 w-80 h-80 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="relative grid lg:grid-cols-[1.2fr_.8fr] gap-10 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.18em] font-semibold text-primary-light mb-5">
+              <span className="w-7 h-px bg-primary-light/70" /> A shared shelf for better studying
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-semibold tracking-[-.045em] text-white max-w-2xl leading-[1.06] mb-5">
+              Good notes make room for <span className="text-primary-light italic font-serif">good ideas.</span>
+            </h1>
+            <p className="text-slate-300 text-sm sm:text-base max-w-xl mb-7 leading-relaxed">
+              Find clear, useful class notes shared by students and educators. Browse by subject, pick up a new perspective, and pass your own notes along.
+            </p>
 
         {/* Search bar */}
-        <form onSubmit={handleSearchSubmit} className="max-w-xl mx-auto flex gap-2 mb-8">
+        <form onSubmit={handleSearchSubmit} className="max-w-xl flex gap-2 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by topic, unit, subject, or title..."
+              placeholder="Search a subject, topic, or title"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-surface-50/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner"
+              className="neo-inset w-full pl-11 pr-4 py-3 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/40"
             />
           </div>
           <button
             type="submit"
-            className="px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-lg shadow-primary/25 transition-all duration-200 shrink-0"
+            className="neo-raised px-6 py-3 rounded-xl text-primary-light text-sm font-semibold shrink-0"
           >
             Search
           </button>
         </form>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-sm font-medium">
+        <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
           <Link
             to="/upload"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:from-primary-hover hover:to-blue-700 text-white shadow-lg shadow-primary/20 transition-all duration-200"
+            className="neo-raised inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-primary-light"
           >
             <UploadCloud className="w-4 h-4" />
             Upload Notes
           </Link>
           <Link
             to="/notes"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-slate-200 border border-slate-700/80 transition-all duration-200"
+            className="neo-raised inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-slate-200"
           >
             <BookOpen className="w-4 h-4" />
             Browse Library
           </Link>
         </div>
+          </div>
+          <div className="relative hidden lg:flex justify-center items-center min-h-[280px]" aria-hidden="true">
+            <div className="absolute w-64 h-64 rounded-full border border-white/[.07]" />
+            <div className="absolute w-48 h-48 rounded-full border border-white/[.08]" />
+            <div className="relative w-60 rotate-3 rounded-[1.6rem] border border-white/15 bg-gradient-to-br from-[#66785c] to-[#344536] p-5 shadow-2xl shadow-black/30">
+              <div className="flex items-center justify-between text-[#edf0e2]/75 text-[10px] uppercase tracking-[.15em]"><span>Field notes</span><Bookmark className="w-4 h-4" /></div>
+              <div className="mt-8 font-serif text-2xl leading-tight text-[#f5f2e5]">Ideas grow<br/>when shared.</div>
+              <div className="mt-7 h-px bg-white/20" />
+              <div className="mt-4 flex items-center gap-2 text-xs text-[#e0e6d3]/80"><GraduationCap className="w-4 h-4" /> Learning, together</div>
+            </div>
+            <div className="absolute bottom-6 right-4 rounded-2xl glass-card px-4 py-3 flex items-center gap-3 -rotate-3">
+              <Library className="w-5 h-5 text-primary-light" />
+              <span className="text-xs font-medium text-slate-200">A library made by learners</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Real Stats Section */}
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div className="glass-card rounded-2xl p-6 border border-slate-800 text-center">
+        <div className="glass-card rounded-2xl p-6 text-center">
           <p className="text-3xl font-extrabold text-white mb-1">
             {stats ? stats.total_notes : '—'}
           </p>
@@ -120,7 +131,7 @@ export const HomePage: React.FC = () => {
             Published Study Notes
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-6 border border-slate-800 text-center">
+        <div className="glass-card rounded-2xl p-6 text-center">
           <p className="text-3xl font-extrabold text-white mb-1">
             {stats ? stats.total_subjects : '—'}
           </p>
@@ -128,8 +139,8 @@ export const HomePage: React.FC = () => {
             Subjects Covered
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-6 border border-slate-800 text-center sm:col-span-2 md:col-span-1">
-          <p className="text-3xl font-extrabold text-emerald-400 mb-1">100%</p>
+        <div className="glass-card rounded-2xl p-6 text-center sm:col-span-2 md:col-span-1">
+          <p className="text-3xl font-extrabold text-primary-light mb-1">100%</p>
           <p className="text-xs uppercase tracking-wider text-slate-400 font-medium">
             Free & Public Access
           </p>

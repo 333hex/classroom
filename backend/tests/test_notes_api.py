@@ -7,6 +7,8 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
+from app.repositories.note_repository import NoteRepository
+
 
 # ─── Helper ────────────────────────────────────────────────────────────────────
 TYPED_NOTE_PAYLOAD = {
@@ -45,6 +47,22 @@ def test_list_notes_empty(client: TestClient):
     assert "items" in data
     assert "total" in data
     assert isinstance(data["items"], list)
+
+
+def test_unhandled_api_error_includes_cors_header(client: TestClient, monkeypatch):
+    def raise_error(self):
+        raise RuntimeError("Unexpected database error")
+
+    monkeypatch.setattr(NoteRepository, "get_distinct_subjects", raise_error)
+
+    with TestClient(client.app, raise_server_exceptions=False) as cors_client:
+        resp = cors_client.get(
+            "/api/v1/subjects",
+            headers={"Origin": "http://localhost:5173"},
+        )
+
+    assert resp.status_code == 500
+    assert resp.headers["access-control-allow-origin"] == "http://localhost:5173"
 
 
 # ─── Create typed note ─────────────────────────────────────────────────────────

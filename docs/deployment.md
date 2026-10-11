@@ -20,30 +20,20 @@
 
 ## 2. Backend Deployment on Render
 
-1. **Create New Web Service**:
-   - Connect your GitHub repository to [render.com](https://render.com).
-   - Set **Root Directory**: `backend`
-   - Set **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt && alembic upgrade head`
-   - **Start Command**: `uvicorn asgi:app --host 0.0.0.0 --port $PORT`
+The repository includes a root-level `render.yaml` Blueprint. In Render, choose **New +** -> **Blueprint**, connect this repository, and let Render read the Blueprint. It configures the backend root directory, Python service, build/start commands, database migration pre-deploy command, and `/api/v1/health` check. It uses the paid Starter plan because Render only supports pre-deploy commands on paid web services.
 
-2. **Configure Environment Variables**:
-   ```env
-   DATABASE_URL=postgresql+psycopg2://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres?sslmode=require
-   SUPABASE_URL=https://[REF].supabase.co
-   SUPABASE_SERVICE_ROLE_KEY=[YOUR_SERVICE_ROLE_KEY]
-   SUPABASE_STORAGE_BUCKET=class-connect-files
-   CORS_ALLOWED_ORIGINS=https://class-connect.vercel.app
-   MAX_UPLOAD_SIZE_MB=50
-   RATE_LIMIT_UPLOAD=10/minute
-   RATE_LIMIT_DELETE=5/minute
-   RATE_LIMIT_DOWNLOAD=60/minute
-   ENVIRONMENT=production
-   SECRET_KEY=[A_RANDOM_LONG_STRING]
-   ```
+During Blueprint setup, provide these values when prompted:
 
-3. **Verify Health Check**:
-   - Set Health Check Path in Render: `/api/v1/health`
+```env
+DATABASE_URL=postgresql+psycopg2://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres?sslmode=require
+SUPABASE_URL=https://[REF].supabase.co
+SUPABASE_SERVICE_ROLE_KEY=[YOUR_SERVICE_ROLE_KEY]
+CORS_ALLOWED_ORIGINS=https://[YOUR-VERCEL-DOMAIN]
+```
+
+Use the Supabase **direct** connection string if Render can reach it; otherwise use Supabase's session pooler connection string. Keep the SQLAlchemy driver prefix `postgresql+psycopg2://` and include `sslmode=require`. The Blueprint generates `SECRET_KEY` and sets production mode and the default storage bucket. The bucket must already exist and remain private.
+
+If you later change the Vercel production domain, update `CORS_ALLOWED_ORIGINS` in the Render service environment to the exact origin (scheme and hostname, no trailing path). Add comma-separated origins only when additional production domains are needed.
 
 ---
 
@@ -52,6 +42,7 @@
 1. **Import Repository**:
    - Go to [vercel.com](https://vercel.com) and click **Add New...** -> **Project**.
    - Select the GitHub repository.
+   - Set the project **Root Directory** to `frontend`.
 
 2. **Configure Build Settings**:
    - **Root Directory**: `frontend`
@@ -59,17 +50,16 @@
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
 
-3. **Configure Environment Variables**:
+3. **Configure the Production Environment Variable**:
    ```env
-   VITE_API_BASE_URL=https://class-connect-api.onrender.com/api/v1
+   VITE_API_BASE_URL=https://[YOUR-RENDER-SERVICE].onrender.com/api/v1
    ```
 
-4. **SPA Rewrite Configuration**:
-   Create or verify `frontend/vercel.json` to route all path requests to `index.html`:
-   ```json
-   {
-     "rewrites": [
-       { "source": "/(.*)", "destination": "/index.html" }
-     ]
-   }
-   ```
+`frontend/vercel.json` already provides the SPA rewrite required for direct navigation to client-side routes. After the first deployment, copy the Render service origin into `CORS_ALLOWED_ORIGINS`, and the Render URL into Vercel's `VITE_API_BASE_URL`, then redeploy the frontend. If you enable Vercel preview deployments, add their origins to the backend CORS list and configure the Preview environment's API URL too.
+
+## 4. Post-deployment checks
+
+- Open `https://[YOUR-RENDER-SERVICE].onrender.com/api/v1/health`; it should return HTTP 200 with `database` and `storage` both `true`.
+- Open the Vercel site, browse notes, and confirm a detail route works after refresh.
+- Upload a small file and verify the resulting download works through the signed URL.
+- Confirm the Supabase storage bucket is private and the service role key exists only in Render's environment settings.
