@@ -20,7 +20,7 @@
 
 ## 2. Backend Deployment on Render
 
-The repository includes a root-level `render.yaml` Blueprint. In Render, choose **New +** -> **Blueprint**, connect this repository, and let Render read the Blueprint. It configures the backend root directory, Python service, build/start commands, database migration pre-deploy command, and `/api/v1/health` check. It uses the paid Starter plan because Render only supports pre-deploy commands on paid web services.
+The repository includes a root-level `render.yaml` Blueprint. In Render, choose **New +** -> **Blueprint**, connect this repository, and let Render read the Blueprint. It configures the backend root directory, Python 3.12.10, build/start commands, database migration pre-deploy command, and `/api/v1/health` check. It uses the paid Starter plan because Render only supports pre-deploy commands on paid web services.
 
 During Blueprint setup, provide these values when prompted:
 
